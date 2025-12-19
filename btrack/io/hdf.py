@@ -22,6 +22,8 @@ import h5py
 import numpy as np
 from numpy import typing as npt
 
+from typing import Optional
+
 if TYPE_CHECKING:
     from btrack import BayesianTracker
 
@@ -198,10 +200,10 @@ class HDF5FileHandler:
     @h5check_property_exists("objects")
     def filtered_objects(
         self,
-        f_expr: str | None = None,
+        f_expr: Optional[str] = None,
         *,
         lazy_load_properties: bool = True,
-        exclude_properties: list[str] | None = None,
+        exclude_properties: Optional[list[str]] = None,
     ) -> list[btypes.PyTrackObject]:
         """A filtered list of objects based on metadata.
 
@@ -493,7 +495,7 @@ class HDF5FileHandler:
         self,
         data: Union[list[btypes.Tracklet], BayesianTracker],
         *,
-        f_expr: str | None = None,
+        f_expr: Optional[str] = None,
     ) -> None:
         """Write tracks to HDF file.
 

@@ -97,8 +97,17 @@ unsigned int BayesianTracker::set_motion_model(
   if (max_lost > 10)
     return ERROR_max_lost_out_of_range;
 
-  if (accuracy < 0. || accuracy > 10.)
+  if (accuracy < 0.) {
     return ERROR_accuracy_out_of_range;
+  }
+
+  if (accuracy > 10.) {
+    if (verbose) {
+      std::cerr << "[btrack warning] accuracy = " << accuracy
+                << " > 10. This may weaken motion gating."
+                << std::endl;
+    }
+}
 
   this->max_lost = max_lost;
   this->prob_not_assign = prob_not_assign;
@@ -201,7 +210,7 @@ unsigned int BayesianTracker::initialise() {
 
   bool useable_frames = false;
   for (size_t n = 1; n < frames.size(); n++) {
-    if ((frames[n] - frames[n - 1]) <= max_lost) {
+    if ((frames[n] - frames[n - 1]) <= (max_lost + 1)) {
       useable_frames = true;
       continue;
     }
@@ -459,10 +468,16 @@ double BayesianTracker::prob_update_motion(const TrackletPtr &trk,
   }
 
   if (PROB_ASSIGN_EXP_DECAY) {
-    // apply an exponential decay according to number of lost
-    // drops to 50% at max lost
-    double a = std::pow(2, -(double)trk->lost / (double)max_lost);
-    prob_assign = a * prob_assign;
+    if (max_lost == 0) {
+      if (trk->lost > 0) {
+        prob_assign = 0.0;
+      }
+    } else {
+      // apply an exponential decay according to number of lost
+      // drops to 50% at max lost
+      double a = std::pow(2, -(double)trk->lost / (double)max_lost);
+      prob_assign = a * prob_assign;
+    }
   }
 
   return prob_assign;

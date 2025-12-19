@@ -19,6 +19,8 @@ from .models import HypothesisModel, MotionModel, ObjectModel
 import numpy as np
 from skimage.util import map_array
 
+from typing import Optional
+
 # Choose a subset of classes/functions to document in public facing API
 __all__ = [
     "segmentation_to_objects",
@@ -66,17 +68,17 @@ def log_stats(stats: dict) -> None:
     )
 
 
-def read_motion_model(cfg: dict) -> MotionModel | None:
+def read_motion_model(cfg: dict) -> Optional[MotionModel]:
     cfg = cfg.get("MotionModel", {})
     return MotionModel(**cfg) if cfg else None
 
 
-def read_object_model(cfg: dict) -> ObjectModel | None:
+def read_object_model(cfg: dict) -> Optional[ObjectModel]:
     cfg = cfg.get("ObjectModel", {})
     return ObjectModel(**cfg) if cfg else None
 
 
-def read_hypothesis_model(cfg: dict) -> HypothesisModel | None:
+def read_hypothesis_model(cfg: dict) -> Optional[HypothesisModel]:
     cfg = cfg.get("HypothesisModel", {})
     return HypothesisModel(**cfg) if cfg else None
 
@@ -141,7 +143,7 @@ def _cat_tracks_as_dict(tracks: list[btypes.Tracklet], properties: list[str]) ->
 def tracks_to_napari(
     tracks: list[btypes.Tracklet],
     *,
-    ndim: int | None = None,
+    ndim: Optional[int] = None,
     replace_nan: bool = True,
 ):
     """Convert a list of Tracklets to napari format input.
@@ -223,8 +225,8 @@ def tracks_to_napari(
 
 def napari_to_tracks(
     data: npt.NDArray,
-    properties: dict[str, npt.ArrayLike] | None,
-    graph: dict[int, list[int]] | None,
+    properties: Optional[dict[str, npt.ArrayLike]],
+    graph: Optional[dict[int, list[int]]],
 ) -> list[btypes.Tracklet]:
     """Convert napari Tracks to a list of Tracklets.
 
@@ -307,7 +309,7 @@ def update_segmentation(
     segmentation: npt.NDArray,
     tracks: list[btypes.Tracklet],
     *,
-    scale: tuple(float) | None = None,
+    scale: Optional[tuple(float)] = None,
     color_by: str = "ID",
 ) -> npt.NDArray:
     """Map tracks back into a masked array.

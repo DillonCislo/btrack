@@ -10,14 +10,14 @@ from napari.types import LayerDataTuple
 import os
 import pathlib
 from collections.abc import Callable, Sequence
-from typing import Union
+from typing import Union, Optional
 
 # Type definitions
 PathOrPaths = Union[os.PathLike, Sequence[os.PathLike]]
 ReaderFunction = Callable[[PathOrPaths], list[LayerDataTuple]]
 
 
-def get_reader(path: PathOrPaths) -> ReaderFunction | None:
+def get_reader(path: PathOrPaths) -> Optional[ReaderFunction]:
     """A basic implementation of the napari_get_reader hook specification.
 
     Parameters

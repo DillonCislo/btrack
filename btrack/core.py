@@ -9,7 +9,7 @@ import itertools
 import logging
 import os
 import warnings
-from typing import Union
+from typing import Union, Optional
 
 import numpy as np
 from numpy import typing as npt
@@ -425,8 +425,7 @@ class BayesianTracker:
         self,
         *,
         step_size: int = 100,
-        tracking_updates: list[Union[str, constants.BayesianUpdateFeatures]]
-        | None = None,
+        tracking_updates: Optional[list[Union[str, constants.BayesianUpdateFeatures]]] = None,
     ) -> None:
         """Run the tracking in an interactive mode.
 
@@ -482,7 +481,7 @@ class BayesianTracker:
                 f" - Inserted {self.n_dummies} dummy objects to fill tracking gaps"
             )
 
-    def step(self, n_steps: int = 1) -> btypes.PyTrackingInfo | None:
+    def step(self, n_steps: int = 1) -> Optional[btypes.PyTrackingInfo]:
         """Run an iteration (or more) of the tracking. Mostly for interactive
         mode tracking."""
         if not self._initialised:
@@ -509,7 +508,7 @@ class BayesianTracker:
         """Proxy for `optimise` for our American friends ;)"""
         return self.optimise(options=kwargs)
 
-    def optimise(self, options: dict | None = None) -> list[hypothesis.Hypothesis]:
+    def optimise(self, options: Optional[dict] = None) -> list[hypothesis.Hypothesis]:
         """Optimize the tracks.
 
         Parameters
@@ -640,8 +639,8 @@ class BayesianTracker:
     def export(
         self,
         filename: os.PathLike,
-        obj_type: str | None = None,
-        filter_by: str | None = None,
+        obj_type: Optional[str] = None,
+        filter_by: Optional[str] = None,
     ) -> None:
         """Export tracks using the appropriate exporter.
 
@@ -661,7 +660,7 @@ class BayesianTracker:
     def to_napari(
         self,
         replace_nan: bool = True,  # noqa: FBT001,FBT002
-        ndim: int | None = None,
+        ndim: Optional[int] = None,
     ) -> tuple[npt.NDArray, dict, dict]:
         """Return the data in a format for a napari tracks layer.
         See :py:meth:`btrack.utils.tracks_to_napari`."""

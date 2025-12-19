@@ -7,12 +7,14 @@ from btrack.utils import napari_to_tracks
 
 import numpy.typing as npt
 
+from typing import Optional
+
 
 def export_to_hdf(
     path: str,
     data: npt.ArrayLike,
     meta: dict,
-) -> str | None:
+) -> Optional[str]:
     tracks = napari_to_tracks(
         data=data,
         properties=meta.get("properties", {}),

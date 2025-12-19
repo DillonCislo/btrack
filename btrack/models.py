@@ -5,6 +5,8 @@ import numpy as np
 from numpy import typing as npt
 from pydantic import BaseModel, field_validator, model_validator
 
+from typing import Optional
+
 __all__ = ["HypothesisModel", "MotionModel", "ObjectModel"]
 
 
@@ -81,8 +83,8 @@ class MotionModel(BaseModel):
     H: npt.NDArray
     P: npt.NDArray
     R: npt.NDArray
-    G: npt.NDArray | None = None
-    Q: npt.NDArray | None = None
+    G: Optional[npt.NDArray] = None
+    Q: Optional[npt.NDArray] = None
     dt: float = 1.0
     accuracy: float = 2.0
     max_lost: int = constants.MAX_LOST

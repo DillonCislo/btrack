@@ -13,6 +13,8 @@ from pathlib import Path
 import numpy as np
 from pydantic import BaseModel, Field, field_validator
 
+from typing import Optional
+
 # get the logger instance
 logger = logging.getLogger(__name__)
 
@@ -77,13 +79,13 @@ class TrackerConfig(BaseModel):
     name: str = "Default"
     version: str = _version.version
     verbose: bool = False
-    motion_model: MotionModel | None = None
-    object_model: ObjectModel | None = None
-    hypothesis_model: HypothesisModel | None = None
+    motion_model: Optional[MotionModel] = None
+    object_model: Optional[ObjectModel] = None
+    hypothesis_model: Optional[HypothesisModel] = None
     max_search_radius: float = constants.MAX_SEARCH_RADIUS
     return_kalman: bool = False
     store_candidate_graph: bool = False
-    volume: ImagingVolume | None = None
+    volume: Optional[ImagingVolume] = None
     update_method: constants.BayesianUpdates = constants.BayesianUpdates.EXACT
     optimizer_options: dict = constants.GLPK_OPTIONS
     features: list[str] = []

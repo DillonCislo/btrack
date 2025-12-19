@@ -13,6 +13,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from typing import Optional
+
 if TYPE_CHECKING:
     from btrack import BayesianTracker
 
@@ -23,8 +25,8 @@ logger = logging.getLogger(__name__)
 def export_delegator(
     filename: os.PathLike,
     tracker: BayesianTracker,
-    obj_type: str | None = None,
-    filter_by: str | None = None,
+    obj_type: Optional[str] = None,
+    filter_by: Optional[str] = None,
 ) -> None:
     """Export data from the tracker using the appropriate exporter.
 
@@ -60,7 +62,7 @@ def export_CSV(
     filename: os.PathLike,
     tracks: list,
     properties: list = constants.DEFAULT_EXPORT_PROPERTIES,
-    obj_type: str | None = None,
+    obj_type: Optional[str] = None,
 ):
     """Export the track data as a simple CSV file.
 
@@ -115,8 +117,8 @@ def export_LBEP(filename: os.PathLike, tracks: list):
 def _export_HDF(
     filename: os.PathLike,
     tracker,
-    obj_type: str | None = None,
-    filter_by: str | None = None,
+    obj_type: Optional[str] = None,
+    filter_by: Optional[str] = None,
 ):
     """Export to HDF."""
 
