@@ -43,6 +43,12 @@ unsigned int count_apoptosis(const TrackletPtr a_trk) {
   return count_state_track(a_trk, STATE_apoptosis, COUNT_STATE_FROM_BACK);
 }
 
+// count the number of null events, starting at the terminus of the
+// track
+unsigned int count_null(const TrackletPtr a_trk) {
+  return count_state_track(a_trk, STATE_null, COUNT_STATE_FROM_BACK);
+}
+
 // generic state counting from the back/or front of the track
 // could also be used to look for mitotic events for example
 unsigned int count_state_track(const TrackletPtr a_trk,
@@ -290,6 +296,9 @@ void HypothesisEngine::create(void) {
 
 // HYPOTHESES
 void HypothesisEngine::hypothesis_false_positive(TrackletPtr a_trk) {
+  if (!hypothesis_allowed(TYPE_Pfalse)) {
+    return;
+  }
   // false positive hypothesis calculated for everything
   Hypothesis h_fp(TYPE_Pfalse, a_trk);
   h_fp.probability = safe_log(P_FP(a_trk));
@@ -423,7 +432,9 @@ void HypothesisEngine::hypothesis_dead(TrackletPtr a_trk) {
   // NEW apoptosis detection hypothesis
   unsigned int n_apoptosis = count_apoptosis(a_trk);
 
-  if (hypothesis_allowed(TYPE_Papop) && n_apoptosis >= m_params.apop_thresh) {
+  if (hypothesis_allowed(TYPE_Papop) &&
+      ((n_apoptosis >= m_params.apop_thresh) ||
+       (m_params.apop_thresh == 0))) {
     Hypothesis h_apoptosis(TYPE_Papop, a_trk);
     h_apoptosis.probability =
         safe_log(P_dead(a_trk, n_apoptosis)) + 0.5 * safe_log(P_TP(a_trk));
@@ -570,7 +581,10 @@ double HypothesisEngine::P_dead(TrackletPtr a_trk,
 
   float p_apoptosis = 0.;
 
-  if (USE_ABSOLUTE_APOPTOSIS_COUNTS) {
+  if (m_params.apop_thresh == 0) {
+    // If the threshold is zero, just use a fixed apoptosis rate
+    p_apoptosis = m_params.apoptosis_rate;
+  } else if (USE_ABSOLUTE_APOPTOSIS_COUNTS) {
     p_apoptosis = 1.0 - std::pow(m_params.apoptosis_rate, n_apoptosis);
   } else {
     p_apoptosis =
